@@ -1,0 +1,12 @@
+# Создайте файл .gitignore в корне проекта
+echo "node_modules/
+.env
+.DS_Store
+npm-debug.log
+build/
+dist/
+.vscode/
+.idea/" > .gitignore
+
+# Повторно добавьте файлы с учетом .gitignore
+git add .
