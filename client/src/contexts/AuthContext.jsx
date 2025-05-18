@@ -74,7 +74,16 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', response.data.token);
       setCurrentUser(response.data.user);
       toast.success('Вы успешно вошли в систему');
-      navigate('/dashboard');
+      
+      // Редирект в зависимости от роли
+      if (response.data.user.role === 'admin') {
+        navigate('/admin');
+      } else if (response.data.user.role === 'manager') {
+        navigate('/manager');
+      } else {
+        navigate('/dashboard');
+      }
+      
       return response;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Ошибка при входе в систему');

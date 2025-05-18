@@ -40,7 +40,7 @@ const LoginPage = () => {
       
       try {
         await login(values);
-        navigate('/dashboard');
+        // navigate удален - редирект происходит в AuthContext в зависимости от роли
       } catch (err) {
         setError(err.response?.data?.message || 'Ошибка при входе в систему');
       } finally {

@@ -28,64 +28,37 @@ const AdminDashboardPage = () => {
     try {
       // Получение общей статистики
       const overviewResponse = await statisticsService.getOverviewStats();
+      console.log('Overview response:', overviewResponse.data);
 
       // Получение статистики по доходам
       const revenueResponse = await statisticsService.getRevenueStats();
+      console.log('Revenue response:', revenueResponse.data);
 
       // Получение статистики по автомобилям
       const carResponse = await statisticsService.getCarStats();
+      console.log('Car response:', carResponse.data);
 
       // Получение статистики по пользователям
       const userResponse = await statisticsService.getUserStats();
+      console.log('User response:', userResponse.data);
 
-      // Объединяем все данные
+      // Объединяем все данные с учетом правильной структуры ответа от API
       setStats({
-        totalUsers: userResponse.data.totalUsers || 0,
-        totalCars: carResponse.data.totalCars || 0,
-        totalBookings: overviewResponse.data.totalBookings || 0,
-        totalRevenue: revenueResponse.data.totalRevenue || 0,
-        revenueGrowth: revenueResponse.data.revenueGrowth || 0,
-        activeBookings: overviewResponse.data.activeBookings || 0,
-        userGrowth: userResponse.data.userGrowth || 0,
+        totalUsers: overviewResponse.data.users?.total || 0,
+        totalCars: overviewResponse.data.cars?.total || 0,
+        totalBookings: overviewResponse.data.bookings?.total || 0,
+        totalRevenue: overviewResponse.data.payments?.netRevenue || 0,
+        revenueGrowth: revenueResponse.data.growth?.percentage || 0,
+        activeBookings: overviewResponse.data.bookings?.byStatus?.active || 0,
+        userGrowth: userResponse.data.growth?.percentage || 0,
         popularCars: carResponse.data.popularCars || [],
-        monthlyRevenue: revenueResponse.data.monthlyRevenue || [],
-        bookingsByStatus: overviewResponse.data.bookingsByStatus || {}
+        monthlyRevenue: revenueResponse.data.monthlyStats || [],
+        bookingsByStatus: overviewResponse.data.bookings?.byStatus || {}
       });
     } catch (err) {
       setError('Не удалось загрузить данные дашборда. Пожалуйста, попробуйте позже.');
       console.error('Error fetching dashboard data:', err);
-
-      // Заполняем демо-данными в случае ошибки
-      setStats({
-        totalUsers: 126,
-        totalCars: 45,
-        totalBookings: 312,
-        totalRevenue: 1258400,
-        revenueGrowth: 12.5,
-        activeBookings: 28,
-        userGrowth: 8.2,
-        popularCars: [
-          { id: 1, brand: 'Toyota', model: 'Camry', totalBookings: 48 },
-          { id: 2, brand: 'BMW', model: 'X5', totalBookings: 42 },
-          { id: 3, brand: 'Tesla', model: 'Model 3', totalBookings: 37 },
-          { id: 4, brand: 'Mercedes', model: 'E-Class', totalBookings: 31 },
-          { id: 5, brand: 'Audi', model: 'A4', totalBookings: 28 }
-        ],
-        monthlyRevenue: [
-          { month: 'Янв', revenue: 89600 },
-          { month: 'Фев', revenue: 76400 },
-          { month: 'Мар', revenue: 102300 },
-          { month: 'Апр', revenue: 94500 },
-          { month: 'Май', revenue: 108700 },
-          { month: 'Июн', revenue: 125600 }
-        ],
-        bookingsByStatus: {
-          active: 28,
-          completed: 264,
-          pending: 12,
-          cancelled: 8
-        }
-      });
+      // Не заполняем демо-данными - оставляем пустые значения
     } finally {
       setLoading(false);
     }

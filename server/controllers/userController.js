@@ -207,6 +207,71 @@ const getUserById = async (req, res) => {
   }
 };
 
+// [ADMIN] Создание нового пользователя
+const createUser = async (req, res) => {
+  try {
+    const { email, password, firstName, lastName, phone, role } = req.body;
+
+    // Проверка обязательных полей
+    if (!email || !password || !firstName || !lastName || !role) {
+      return res.status(400).json({ 
+        message: 'Необходимо заполнить все обязательные поля' 
+      });
+    }
+
+    // Проверка роли
+    if (!['client', 'manager', 'admin'].includes(role)) {
+      return res.status(400).json({ 
+        message: 'Недопустимая роль пользователя' 
+      });
+    }
+
+    // Проверка прав на создание пользователей с разными ролями
+    if (req.user.role === 'manager' && role !== 'client') {
+      return res.status(403).json({
+        message: 'Менеджер может создавать только клиентов'
+      });
+    }
+
+    // Проверка существующего пользователя
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ 
+        message: 'Пользователь с таким email уже существует' 
+      });
+    }
+
+    // Создание нового пользователя (пароль будет хеширован через хук в модели)
+    const newUser = await User.create({
+      email,
+      password, // не хешируем вручную - это делает хук beforeCreate
+      firstName,
+      lastName,
+      phone,
+      role,
+      isVerified: true, // Админ создает проверенных пользователей
+      status: 'active'
+    });
+
+    res.status(201).json({
+      message: 'Пользователь успешно создан',
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        phone: newUser.phone,
+        role: newUser.role,
+        isVerified: newUser.isVerified,
+        status: newUser.status
+      }
+    });
+  } catch (error) {
+    console.error('Ошибка при создании пользователя:', error);
+    res.status(500).json({ message: 'Ошибка при создании пользователя' });
+  }
+};
+
 // [ADMIN] Обновление информации о пользователе
 const updateUser = async (req, res) => {
   try {
@@ -281,6 +346,43 @@ const updateUserStatus = async (req, res) => {
   }
 };
 
+// [ADMIN] Сброс пароля пользователя
+const resetUserPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+    
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ 
+        message: 'Пароль должен содержать минимум 6 символов' 
+      });
+    }
+    
+    const user = await User.findByPk(id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+
+    // Установка нового пароля (будет хеширован через хук beforeUpdate)
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ 
+      message: 'Пароль пользователя успешно изменен',
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
+    });
+  } catch (error) {
+    console.error('Ошибка при сбросе пароля:', error);
+    res.status(500).json({ message: 'Ошибка при сбросе пароля' });
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
@@ -288,6 +390,8 @@ module.exports = {
   getDocuments,
   getAllUsers,
   getUserById,
+  createUser,
   updateUser,
-  updateUserStatus
+  updateUserStatus,
+  resetUserPassword
 };

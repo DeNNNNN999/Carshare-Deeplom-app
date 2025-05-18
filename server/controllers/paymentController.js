@@ -273,7 +273,13 @@ const updatePaymentStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
     
-    // Проверка прав доступа уже выполняется в middleware
+    console.log('Обновление статуса платежа:', { id, status, user: req.user.role });
+    
+    // Проверка валидности статуса
+    const validStatuses = ['pending', 'completed', 'failed', 'cancelled', 'refunded'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Недопустимый статус платежа' });
+    }
     
     // Поиск платежа
     const payment = await Payment.findByPk(id, {
@@ -284,15 +290,21 @@ const updatePaymentStatus = async (req, res) => {
       return res.status(404).json({ message: 'Платеж не найден' });
     }
     
+    console.log('Найден платеж:', payment.toJSON());
+    
     // Обновление статуса
+    const oldStatus = payment.status;
     payment.status = status;
     await payment.save();
+    
+    console.log(`Статус платежа изменен с ${oldStatus} на ${status}`);
     
     // Если статус платежа изменен на 'завершен', обновляем статус бронирования
     if (status === 'completed' && payment.Booking) {
       const booking = payment.Booking;
       booking.status = 'confirmed';
       await booking.save();
+      console.log('Бронирование подтверждено:', booking.id);
     } else if ((status === 'cancelled' || status === 'failed') && payment.Booking) {
       // Если платеж отменен или не удался, отменяем бронирование
       const booking = payment.Booking;

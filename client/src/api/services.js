@@ -83,6 +83,16 @@ export const userService = {
   updateUserStatus: (id, status) => {
     return api.put(`/users/${id}/status`, { status });
   },
+  
+  // [ADMIN/MANAGER] Создание нового пользователя
+  createUser: (userData) => {
+    return api.post('/users', userData);
+  },
+  
+  // [ADMIN] Сброс пароля пользователя
+  resetUserPassword: (id, newPassword) => {
+    return api.put(`/users/${id}/password`, { newPassword });
+  },
 };
 
 // Сервис для работы с автомобилями
@@ -338,3 +348,15 @@ export default {
   location: locationService,
   statistics: statisticsService,
 };
+
+// Экспорт с алиасами для совместимости с существующим кодом
+export const authAPI = authService;
+export const userAPI = userService;
+export const carAPI = carService;
+export const rentalPlanAPI = rentalPlanService;
+export const bookingAPI = bookingService;
+export const paymentAPI = paymentService;
+export const reviewAPI = reviewService;
+export const promotionAPI = promotionService;
+export const locationAPI = locationService;
+export const statisticsAPI = statisticsService;

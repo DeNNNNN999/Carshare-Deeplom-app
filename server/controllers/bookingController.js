@@ -1,5 +1,6 @@
 const { Booking, Car, User, RentalPlan, Payment, Promotion } = require('../models');
-const { pricing, email } = require('../utils');
+const { pricing } = require('../utils');
+// const { email } = require('../utils'); // временно отключено
 const sequelize = require('../config/database');
 const { Op } = require('sequelize');
 
@@ -439,9 +440,9 @@ const confirmBooking = async (req, res) => {
     car.status = 'rented';
     await car.save();
 
-    // Отправка email подтверждения
-    const user = booking.User;
-    await email.sendBookingConfirmationEmail(user.email, booking, car);
+    // Отправка email подтверждения (временно отключено)
+    // const user = booking.User;
+    // await email.sendBookingConfirmationEmail(user.email, booking, car);
 
     res.status(200).json({ 
       message: 'Бронирование успешно подтверждено',

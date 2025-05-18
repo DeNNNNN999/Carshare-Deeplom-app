@@ -1,6 +1,6 @@
 import api from './axios';
 
-// Import mock services during development
+// Import real services and APIs
 import {
   authService,
   userService,
@@ -11,10 +11,21 @@ import {
   reviewService,
   promotionService,
   locationService,
-  statisticsService
-} from './mock-services';
+  statisticsService,
+  // Import API aliases
+  authAPI,
+  userAPI,
+  carAPI,
+  rentalPlanAPI,
+  bookingAPI,
+  paymentAPI,
+  reviewAPI,
+  promotionAPI,
+  locationAPI,
+  statisticsAPI
+} from './services';
 
-// Uncomment this to use real services in production
+// Import mock services during development (uncomment if needed)
 // import {
 //   authService,
 //   userService,
@@ -26,7 +37,7 @@ import {
 //   promotionService,
 //   locationService,
 //   statisticsService
-// } from './services';
+// } from './mock-services';
 
 export {
   api,
@@ -39,5 +50,16 @@ export {
   reviewService,
   promotionService,
   locationService,
-  statisticsService
+  statisticsService,
+  // Export API aliases directly
+  authAPI,
+  userAPI,
+  carAPI,
+  rentalPlanAPI,
+  bookingAPI,
+  paymentAPI,
+  reviewAPI,
+  promotionAPI,
+  locationAPI,
+  statisticsAPI
 };

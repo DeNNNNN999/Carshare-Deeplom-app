@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { auth, admin } = require('../middleware');
+const { auth, admin, manager } = require('../middleware');
 const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 // Настройка multer для загрузки файлов
 const storage = multer.diskStorage({
@@ -38,10 +40,16 @@ router.get('/', [auth, admin], userController.getAllUsers);
 // [ADMIN] Получение информации о конкретном пользователе
 router.get('/:id', [auth, admin], userController.getUserById);
 
+// [ADMIN/MANAGER] Создание нового пользователя
+router.post('/', [auth, manager], userController.createUser);
+
 // [ADMIN] Обновление информации о пользователе
 router.put('/:id', [auth, admin], userController.updateUser);
 
 // [ADMIN] Блокировка/разблокировка пользователя
 router.put('/:id/status', [auth, admin], userController.updateUserStatus);
+
+// [ADMIN] Сброс пароля пользователя
+router.put('/:id/password', [auth, admin], userController.resetUserPassword);
 
 module.exports = router;

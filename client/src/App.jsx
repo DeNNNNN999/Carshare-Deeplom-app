@@ -36,6 +36,7 @@ import ReviewsPage from './pages/dashboard/ReviewsPage'
 // Admin Pages
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import UserManagementPage from './pages/admin/UserManagementPage'
+import CreateUserPage from './pages/admin/CreateUserPage'
 import CarManagementPage from './pages/admin/CarManagementPage'
 import BookingManagementPage from './pages/admin/BookingManagementPage'
 import TariffManagementPage from './pages/admin/TariffManagementPage'
@@ -52,9 +53,12 @@ import NotFoundPage from './pages/NotFoundPage'
 
 // Icons Test Page
 import IconsTest from './pages/IconsTest'
+
+// Manager Pages
 import ManagerDashboardPage from './pages/manager/ManagerDashboardPage'
 import PaymentConfirmationPage from './pages/manager/PaymentConfirmationPage'
 import ManagerBookingManagementPage from './pages/manager/BookingManagementPage'
+import CreateClientPage from './pages/manager/CreateClientPage'
 
 function App() {
   const { checkAuth } = useAuth()
@@ -120,6 +124,7 @@ function App() {
       >
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/users" element={<UserManagementPage />} />
+        <Route path="/admin/users/new" element={<CreateUserPage />} />
         <Route path="/admin/cars" element={<CarManagementPage />} />
         <Route path="/admin/bookings" element={<BookingManagementPage />} />
         <Route path="/admin/tariffs" element={<TariffManagementPage />} />
@@ -136,6 +141,7 @@ function App() {
         }
       >
         <Route path="/manager" element={<ManagerDashboardPage />} />
+        <Route path="/manager/users/new" element={<CreateClientPage />} />
         <Route path="/manager/cars" element={<CarManagementPage />} />
         <Route path="/manager/bookings" element={<ManagerBookingManagementPage />} />
         <Route path="/manager/payments" element={<PaymentConfirmationPage />} />

@@ -36,18 +36,23 @@ const PaymentConfirmationPage = () => {
 
   const handleConfirmPayment = async (paymentId, bookingId) => {
     try {
+      console.log('Подтверждение платежа:', { paymentId, bookingId });
+      
       // Обновление статуса платежа
-      await paymentService.updatePaymentStatus(paymentId, 'completed');
+      const paymentResponse = await paymentService.updatePaymentStatus(paymentId, 'completed');
+      console.log('Статус платежа обновлен:', paymentResponse.data);
       
       // Подтверждение бронирования
-      await bookingService.confirmBooking(bookingId);
+      const bookingResponse = await bookingService.confirmBooking(bookingId);
+      console.log('Бронирование подтверждено:', bookingResponse.data);
       
       toast.success('Платеж подтвержден успешно');
       
       // Обновление списка платежей
       fetchPayments();
     } catch (err) {
-      console.error('Ошибка при подтверждении платежа:', err);
+      console.error('Полная ошибка при подтверждении платежа:', err);
+      console.error('Детали ошибки:', err.response);
       toast.error(err.response?.data?.message || 'Ошибка при подтверждении платежа');
     }
   };
